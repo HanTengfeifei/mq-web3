@@ -1,12 +1,10 @@
 import { sha3_224 } from 'js-sha3';
-import { Request } from '../core/request';
+// import { Request } from '../core/request';
 import { GenerateEd25519KeyPair, getCurrentDate, selectUrl } from '../utils';
-import { savePublicKeyRequest } from '../api';
-import { SavePublicKeyParams, EthAccountType } from '../types';
-
+// import { savePublicKeyRequest } from '../api';
 export class Register {
   static getEthAccount = async () => {
-    let res: EthAccountType = {
+    let res = {
       address: '',
       balance: 0,
       shortAddress: '',
@@ -16,7 +14,7 @@ export class Register {
       params: [{ eth_accounts: {} }],
     };
     // @ts-ignore
-    const requestPermissionsRes = await window.ethereum.request(reqParams).catch((e: any) => {
+    const requestPermissionsRes = await wallet.request(reqParams).catch((e) => {
       console.log(e, 'e');
     });
 
@@ -26,7 +24,7 @@ export class Register {
 
     try {
       //@ts-ignore
-      let address = await window.ethereum.request({
+      let address = await wallet.request({
         method: 'eth_accounts',
       });
       if (address && address.length > 0) {
@@ -36,7 +34,7 @@ export class Register {
           address[0].substring(0, 5) + '...' + address[0].substring(strLength - 4, strLength);
 
         //@ts-ignore
-        let balance = await window.ethereum.request({
+        let balance = await wallet.request({
           method: 'eth_getBalance',
           params: [address[0], 'latest'],
         });
@@ -51,8 +49,8 @@ export class Register {
     return res;
   };
 
-  static signMetaMask = async (domainUrl: string, connectUrl?: string) => {
-    new Request(selectUrl('http', connectUrl));
+  static signMetaMask = async (domainUrl, connectUrl) => {
+    // new Request(selectUrl('http', connectUrl));
 
     const { address } = await Register.getEthAccount();
     const { PrivateKey, PublicKey } = await GenerateEd25519KeyPair();
@@ -72,12 +70,12 @@ export class Register {
     Issued At: ${getCurrentDate()}`;
 
     // @ts-ignore metamask signature
-    const signature = await window.ethereum.request({
+    const signature = await wallet.request({
       method: 'personal_sign',
       params: [signContent, address, 'web3mq'],
     });
 
-    let payload: SavePublicKeyParams = {
+    let payload = {
       userid: userid,
       pubkey: PublicKey,
       metamask_signature: signature,
@@ -87,7 +85,7 @@ export class Register {
       timestamp: timestamp,
     };
 
-    await savePublicKeyRequest(payload);
+    // await savePublicKeyRequest(payload);
 
     return { PrivateKey, PublicKey };
   };
