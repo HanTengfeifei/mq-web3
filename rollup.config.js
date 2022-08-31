@@ -5,6 +5,11 @@ import { babel } from '@rollup/plugin-babel';
 import { eslint } from 'rollup-plugin-eslint';
 import packageJSON from './package.json';
 import { terser } from 'rollup-plugin-terser';
+import snaps from '@metamask/rollup-plugin-snaps';
+import execute from 'rollup-plugin-execute';
+// const execute = require('rollup-plugin-execute');
+// const snaps = require('@metamask/rollup-plugin-snaps').default;
+// const execute = require('rollup-plugin-execute');
 
 const getPath = (_path) => path.resolve(__dirname, _path);
 
@@ -25,6 +30,8 @@ const esPlugin = eslint({
 const commonConf = {
   input: getPath('./src/index.js'),
   plugins: [
+    snaps(),
+    execute(['yarn manifest', 'yarn eval']),
     resolve({ browser: true }, extensions),
     commonjs(),
     esPlugin,
@@ -44,12 +51,13 @@ const commonConf = {
 const outputMap = [
   {
     file: packageJSON.main,
-    format: 'umd',
+    format: 'esm',
     globals: {
       '@noble/ed25519': 'ed',
       '@protobuf-ts/plugin': 'pb',
       'js-sha3': 'js-sha3',
     },
+    sourcemap: true,
   },
   // {
   //   file: packageJSON.module,
