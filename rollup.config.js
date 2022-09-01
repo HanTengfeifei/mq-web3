@@ -56,7 +56,7 @@ const outputMap = [
     //   '@noble/ed25519': 'ed',
     //   'js-sha3': 'js-sha3',
     // },
-    sourcemap: true,
+    // sourcemap: true,
     extend: true,
   },
   // {
