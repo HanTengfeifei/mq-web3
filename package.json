@@ -22,8 +22,7 @@
     "clean": "rimraf 'dist/*'",
     "manifest": "mm-snap manifest --fix",
     "eval": "mm-snap eval -b dist/bundle.js",
-    "serve": "concurrently \"rollup --config --watch\" \"mm-snap serve\"",
-    "postinstall": "patch-package"
+    "serve": "concurrently \"rollup --config --watch\" \"mm-snap serve\""
   },
   "husky": {
     "hooks": {
