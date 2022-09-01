@@ -1,8 +1,13 @@
 import * as sha from 'js-sha3';
-// import { Request } from '../core/request';
+import { Request } from '../core/request';
 import { GenerateEd25519KeyPair, getCurrentDate, selectUrl } from '../utils';
-// import { savePublicKeyRequest } from '../api';
+import { savePublicKeyRequest } from '../api';
 export class Register {
+  appKey;
+
+  constructor(appKey) {
+    this.appKey = appKey || '';
+  }
   static getEthAccount = async () => {
     let res = {
       address: '',
@@ -50,8 +55,7 @@ export class Register {
   };
 
   static signMetaMask = async (domainUrl, connectUrl) => {
-    // new Request(selectUrl('http', connectUrl));
-    console.log(selectUrl('http', connectUrl));
+    new Request(selectUrl('http', connectUrl));
 
     const { address } = await Register.getEthAccount();
     const { PrivateKey, PublicKey } = await GenerateEd25519KeyPair();
@@ -85,11 +89,15 @@ export class Register {
       wallet_address: address,
       wallet_type: 'eth',
       timestamp: timestamp,
+      app_key: this.appKey,
     };
-    console.log(payload);
+    console.log(payload, PrivateKey);
+    let restest = null;
+    try {
+      restest = await savePublicKeyRequest(payload);
+    } catch (e) {}
 
-    // await savePublicKeyRequest(payload);
-
-    return { PrivateKey, PublicKey };
+    // return { PrivateKey, PublicKey };
+    return restest;
   };
 }
