@@ -1,4 +1,4 @@
-import ed from '@noble/ed25519';
+import * as ed from '@noble/ed25519';
 const ByteArrayToHexString = (byteArray) => {
   return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
 };

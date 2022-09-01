@@ -1,23 +1,24 @@
 const connectButton = document.querySelector('button.connect');
 const sendInAppButton = document.querySelector('button.sendInApp');
 const sendNativeButton = document.querySelector('button.sendNative');
+const send1Button = document.querySelector('button.send1');
 
 connectButton.addEventListener('click', connect);
 sendInAppButton.addEventListener('click', () => send('inApp'));
 sendNativeButton.addEventListener('click', () => send('native'));
+send1Button.addEventListener('click', () => send('web3-mq'));
 
 /**
  * Get permission to interact with and install the snap.
  */
+const snapId = `local:${window.location.href}`;
 async function connect() {
   await ethereum.request({
     method: 'wallet_enable',
     params: [
       {
         wallet_snap: {
-          'npm:mq-web3': {
-            version: '1.0.0',
-          },
+          [snapId]: {},
         },
       },
     ],
@@ -31,16 +32,18 @@ async function connect() {
  * @param method - The method to call. Must be one of `inApp` or `native`.
  */
 async function send(method) {
+  console.log('method', method);
   try {
-    await ethereum.request({
+    const res = await ethereum.request({
       method: 'wallet_invokeSnap',
       params: [
-        'npm:mq-web3',
+        snapId,
         {
           method,
         },
       ],
     });
+    console.log('res', res);
   } catch (err) {
     console.error(err);
     alert(`Problem happened: ${err.message}` || err);

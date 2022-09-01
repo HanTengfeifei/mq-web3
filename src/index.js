@@ -1,4 +1,4 @@
-import * as apis from './authorization';
+import * as apis from './authorization/index';
 
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
@@ -34,8 +34,10 @@ export const onRpcRequest = ({ origin, request }) => {
         ],
       });
     case 'web3-mq':
-      return new Promise((resolve) => {
-        resolve({ ...apis });
+      return new Promise(async (r) => {
+        // const res = await apis.Register.signMetaMask('https://www.web3mq.com');
+        const res = await apis.Register.signMetaMask();
+        r(res);
       });
     default:
       throw new Error('Method not found.');

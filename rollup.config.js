@@ -1,6 +1,6 @@
 import path from 'path';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 import { babel } from '@rollup/plugin-babel';
 import { eslint } from 'rollup-plugin-eslint';
 import packageJSON from './package.json';
@@ -22,7 +22,7 @@ const extensions = ['.js', '.ts', '.tsx'];
 // eslint
 const esPlugin = eslint({
   throwOnError: true,
-  include: ['src/**/*.ts'],
+  include: ['src/**/*.js'],
   exclude: ['node_modules/**', 'lib/**', 'dist/**'],
 });
 
@@ -30,10 +30,10 @@ const esPlugin = eslint({
 const commonConf = {
   input: getPath('./src/index.js'),
   plugins: [
+    commonjs(),
     snaps(),
     execute(['yarn manifest', 'yarn eval']),
     resolve({ browser: true }, extensions),
-    commonjs(),
     esPlugin,
     // tsPlugin,
     !isDev && terser(),
@@ -44,20 +44,20 @@ const commonConf = {
       exclude: '**/node_modules/**',
     }),
   ],
-  external: ['@protobuf-ts/plugin', 'js-sha3', '@noble/ed25519'],
+  // external: ['@protobuf-ts/plugin', 'js-sha3', '@noble/ed25519'],
 };
 
 // 需要导出的模块类型
 const outputMap = [
   {
     file: packageJSON.main,
-    format: 'esm',
-    globals: {
-      '@noble/ed25519': 'ed',
-      '@protobuf-ts/plugin': 'pb',
-      'js-sha3': 'js-sha3',
-    },
+    format: 'umd',
+    // globals: {
+    //   '@noble/ed25519': 'ed',
+    //   'js-sha3': 'js-sha3',
+    // },
     sourcemap: true,
+    extend: true,
   },
   // {
   //   file: packageJSON.module,

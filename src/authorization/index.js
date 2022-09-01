@@ -1,4 +1,4 @@
-import { sha3_224 } from 'js-sha3';
+import * as sha from 'js-sha3';
 // import { Request } from '../core/request';
 import { GenerateEd25519KeyPair, getCurrentDate, selectUrl } from '../utils';
 // import { savePublicKeyRequest } from '../api';
@@ -51,15 +51,17 @@ export class Register {
 
   static signMetaMask = async (domainUrl, connectUrl) => {
     // new Request(selectUrl('http', connectUrl));
+    console.log(selectUrl('http', connectUrl));
 
     const { address } = await Register.getEthAccount();
     const { PrivateKey, PublicKey } = await GenerateEd25519KeyPair();
     const userid = `user:${PublicKey}`;
     const timestamp = Date.now();
     const wallet_type = 'eth';
-    const NonceContent = sha3_224(
+    const NonceContent = sha.sha3_224(
       userid + address + wallet_type + PublicKey + timestamp.toString(),
     );
+    // const NonceContent = userid + address + wallet_type + PublicKey + timestamp.toString();
 
     let signContent = `Web3MQ wants you to sign in with your Ethereum account:
     ${address}
@@ -84,6 +86,7 @@ export class Register {
       wallet_type: 'eth',
       timestamp: timestamp,
     };
+    console.log(payload);
 
     // await savePublicKeyRequest(payload);
 
