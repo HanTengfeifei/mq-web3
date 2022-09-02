@@ -44,7 +44,7 @@ export class Connect {
     };
     this.ws = wsconn;
   }
-  onMessageCallback(PbType, bytes: Uint8Array) {
+  onMessageCallback(PbType, bytes) {
     switch (PbType) {
       case PbTypeConnectRespCommand:
         const { nodeId } = ConnectCommand.fromBinary(bytes);

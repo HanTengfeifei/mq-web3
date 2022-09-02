@@ -1,4 +1,4 @@
-import { Register } from '../register';
+import { Register } from '../authorization';
 import { Channel } from '../channel';
 import { Connect } from '../connect';
 import { Message } from '../message';
@@ -8,7 +8,7 @@ import { Notify } from '../notify';
 import { Request } from '../core/request';
 
 import event from '../core/eventEmitter';
-import { selectUrl } from '../utils';
+import { selectUrl, getFastestUrl } from '../utils';
 export class Client {
   static _instance;
   static wsUrl;
@@ -32,11 +32,17 @@ export class Client {
     this.notify = new Notify(this);
   }
 
-  static init = (initOptions = {}) => {
+  static init = async (
+    initOptions = {
+      connectUrl: null,
+    },
+  ) => {
     const { connectUrl, app_key } = initOptions;
-    Client.wsUrl = selectUrl('ws', connectUrl);
-    new Request(selectUrl('http', connectUrl));
-    return new Register(app_key);
+    const fastUrl = connectUrl || (await getFastestUrl());
+    Client.wsUrl = selectUrl('ws', fastUrl);
+    new Request(selectUrl('http', fastUrl));
+    Client.register = new Register(app_key);
+    return fastUrl;
   };
 
   static getInstance = (keys) => {

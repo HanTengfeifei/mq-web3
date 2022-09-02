@@ -7,7 +7,7 @@
     "url": "https://github.com/HanTengfeifei/mq-web3.git"
   },
   "source": {
-    "shasum": "kwjPpDPJbASv+LZTJJivaLZb6ZXdVznWv4Z7AvSWmZg=",
+    "shasum": "kj0ag3cbpcQOkxHGHFUbT12cCf4ybPjWq36Q9pqXjjk=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
@@ -19,7 +19,8 @@
   "initialPermissions": {
     "snap_notify": {},
     "endowment:long-running": {},
-    "endowment:network-access": {}
+    "endowment:network-access": {},
+    "snap_manageState": {}
   },
   "manifestVersion": "0.1"
 }

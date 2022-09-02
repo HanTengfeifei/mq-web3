@@ -1,7 +1,63 @@
 import * as ed from '@noble/ed25519';
-// import { Web3MQRequestMessage } from './pb/index';
+import { Web3MQRequestMessage } from './pb';
+import { Request } from './core/request';
+import { domainUrlList } from './core/config';
 const ByteArrayToHexString = (byteArray) => {
   return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
+};
+const handleSort = (key) => {
+  return (a, b) => {
+    const val1 = a[key];
+    const val2 = b[key];
+    return val1 - val2;
+  };
+};
+export const getAllDomainList = async () => {
+  const timestamp = Date.now();
+
+  const requestQueue = domainUrlList.map(async (item) => {
+    const { headers } = await Request.head(`${item}/api/ping/`);
+    const timeDifference = new Date(headers.date).valueOf() - timestamp;
+    return {
+      time: timeDifference,
+      url: item,
+      serverRate: headers['server-rate'],
+      nodeId: headers.nodeid,
+    };
+  });
+  return await Promise.all(requestQueue);
+};
+export const getFastestUrl = async () => {
+  try {
+    const list = await getAllDomainList();
+    // Sorting strategy
+    return list.sort(handleSort('time'))[0].url;
+  } catch (error) {
+    console.log(error, 'get fast url error');
+    return domainUrlList[0];
+  }
+};
+export const sendConnectCommand = async (keys) => {
+  const { PrivateKey, userid } = keys;
+  const timestamp = Date.now();
+  let nodeId = 'nodeId';
+  let ts = BigInt(timestamp);
+
+  let prestr = nodeId + userid + ts.toString();
+
+  const signature = await getDataSignature(PrivateKey, prestr);
+
+  const reqCmd = {
+    nodeId,
+    userId: userid,
+    timestamp: ts,
+    msgSign: signature,
+  };
+
+  const bytes = ConnectCommand.toBinary(reqCmd);
+  const concatArray = GetContactBytes(PbTypeConnectReqCommand, bytes);
+
+  return concatArray;
 };
 export const GenerateEd25519KeyPair = async () => {
   let privateObj = ed.utils.randomPrivateKey();
@@ -87,9 +143,9 @@ export const sendMessageCommand = async (keys, topic, msg, nodeId) => {
     nodeId,
   };
   console.log(msgReq);
-  // const bytes = Web3MQRequestMessage.toBinary(msgReq);
+  const bytes = Web3MQRequestMessage.toBinary(msgReq);
 
-  // const concatArray = GetContactBytes(PbTypeMessage, bytes);
+  const concatArray = GetContactBytes(PbTypeMessage, bytes);
   return concatArray;
 };
 

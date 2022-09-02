@@ -22,7 +22,7 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
     config.body = JSON.stringify(body);
   }
 
-  return window.fetch(`${baseURL}/${endpoint}`, config).then(async (response) => {
+  return window.fetch(`${baseURL}${endpoint}`, config).then(async (response) => {
     if (response.status === 401) {
       logout();
       window.location.assign(window.location);
@@ -53,5 +53,8 @@ export class Request {
   }
   static get(endpoint, customConfig = {}) {
     return request(endpoint, { ...customConfig.params });
+  }
+  static head(endpoint) {
+    return window.fetch(endpoint).then((res) => res.json);
   }
 }

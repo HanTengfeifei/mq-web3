@@ -2,11 +2,13 @@ const connectButton = document.querySelector('button.connect');
 const sendInAppButton = document.querySelector('button.sendInApp');
 const sendNativeButton = document.querySelector('button.sendNative');
 const send1Button = document.querySelector('button.send1');
+const send2Button = document.querySelector('button.send2');
 
 connectButton.addEventListener('click', connect);
 sendInAppButton.addEventListener('click', () => send('inApp'));
 sendNativeButton.addEventListener('click', () => send('native'));
 send1Button.addEventListener('click', () => send('web3-mq'));
+send2Button.addEventListener('click', () => send('instance'));
 
 /**
  * Get permission to interact with and install the snap.

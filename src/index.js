@@ -1,5 +1,7 @@
 import * as apis from './authorization/index';
-
+import { Client } from './client';
+export * from './client';
+export * from './authorization/index';
 /**
  * Handle incoming JSON-RPC requests, sent through `wallet_invokeSnap`.
  *
@@ -11,7 +13,27 @@ import * as apis from './authorization/index';
  * @throws If the request method is not valid for this snap.
  * @throws If the `snap_notify` call failed.
  */
-export const onRpcRequest = ({ origin, request }) => {
+async function saveClient(keys) {
+  await wallet.request({
+    method: 'snap_manageState',
+    params: ['update', { keys: keys }],
+  });
+}
+async function getClient() {
+  const state = await wallet.request({
+    method: 'snap_manageState',
+    params: ['get'],
+  });
+  if (state === null || (typeof state === 'object' && state.keys === undefined)) {
+    return null;
+  }
+  return state.keys;
+}
+export const onRpcRequest = async ({ origin, request }) => {
+  // const state = await getClient();
+  // if (!state) {
+  //   await saveClient(keys));
+  // }
   switch (request.method) {
     case 'inApp':
       return wallet.request({
@@ -35,9 +57,25 @@ export const onRpcRequest = ({ origin, request }) => {
       });
     case 'web3-mq':
       return new Promise(async (r) => {
-        // const res = await apis.Register.signMetaMask('https://www.web3mq.com');
-        const res = await apis.Register.signMetaMask();
+        await Client.init();
+        const res = await new apis.Register('vAUJTFXbBZRkEDRE').signMetaMask();
+        await saveClient(res);
         r(res);
+      });
+    case 'instance':
+      return new Promise(async (r) => {
+        try {
+          const keys = await getClient();
+          if (keys) {
+            r({
+              name: 'test',
+            });
+          }
+        } catch (e) {
+          return r({
+            name: 'test',
+          });
+        }
       });
     default:
       throw new Error('Method not found.');

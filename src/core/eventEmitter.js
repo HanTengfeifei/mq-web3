@@ -1,13 +1,13 @@
 import { isValidEventType } from './events';
 class EventEmitter {
-  events
+  events;
 
   constructor() {
     this.events = {};
   }
 
   // 订阅
-  on(eventName ,callback) {
+  on(eventName, callback) {
     const valid = isValidEventType(eventName);
     if (!valid) {
       throw Error(`Invalid event type ${eventName}`);
@@ -22,7 +22,7 @@ class EventEmitter {
   }
 
   // 触发
-  emit(eventName, ...args[]) {
+  emit(eventName, ...args) {
     const callbacks = this.events[eventName] || [];
     if (callbacks.length === 0) {
       throw new Error(`The ${eventName} event was not registered`);
@@ -37,9 +37,7 @@ class EventEmitter {
       // throw new Error('The callback function is required');
     }
     const callbacks = this.events[eventName] || [];
-    const newCallbacks = callbacks.filter(
-      (fn) => fn != callback && fn.initialCallback != callback,
-    );
+    const newCallbacks = callbacks.filter((fn) => fn != callback && fn.initialCallback != callback);
 
     this.events[eventName] = newCallbacks;
   }
@@ -48,7 +46,7 @@ class EventEmitter {
     if (callback === undefined) {
       throw new Error('The callback function is required');
     }
-    const one = (...args[]) => {
+    const one = (...args) => {
       callback(...args);
       this.off(eventName, one);
     };

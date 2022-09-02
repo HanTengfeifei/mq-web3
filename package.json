@@ -8,8 +8,10 @@
   },
   "author": "Tengfei Han",
   "files": [
-    "dist",
-    "readme.md"
+    "dist/",
+    "images/",
+    "readme.md",
+    "snap.manifest.json"
   ],
   "keywords": [
     "chat",
