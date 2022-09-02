@@ -1,5 +1,5 @@
 import * as ed from '@noble/ed25519';
-import { Web3MQRequestMessage } from './pb/index';
+// import { Web3MQRequestMessage } from './pb/index';
 const ByteArrayToHexString = (byteArray) => {
   return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
 };
@@ -86,10 +86,10 @@ export const sendMessageCommand = async (keys, topic, msg, nodeId) => {
     messageId: msgid,
     nodeId,
   };
+  console.log(msgReq);
+  // const bytes = Web3MQRequestMessage.toBinary(msgReq);
 
-  const bytes = Web3MQRequestMessage.toBinary(msgReq);
-
-  const concatArray = GetContactBytes(PbTypeMessage, bytes);
+  // const concatArray = GetContactBytes(PbTypeMessage, bytes);
   return concatArray;
 };
 
