@@ -19,7 +19,7 @@ export class Register {
       params: [{ eth_accounts: {} }],
     };
     // @ts-ignore
-    const requestPermissionsRes = await window.ethereum.request(reqParams).catch((e) => {
+    const requestPermissionsRes = await window.ethereum.request(reqParams).catch(e => {
       console.log(e, 'e');
     });
 
@@ -56,6 +56,7 @@ export class Register {
 
   signMetaMask = async (domainUrl, connectUrl) => {
     new Request(selectUrl('http', connectUrl));
+    // selectUrl('http', connectUrl);
 
     const { address } = await this.getEthAccount();
     const { PrivateKey, PublicKey } = await GenerateEd25519KeyPair();

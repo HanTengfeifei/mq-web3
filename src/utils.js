@@ -1,11 +1,11 @@
 import * as ed from '@noble/ed25519';
-import { Web3MQRequestMessage } from './pb';
+import { Web3MQRequestMessage, ConnectCommand } from './pb';
 import { Request } from './core/request';
 import { domainUrlList } from './core/config';
-const ByteArrayToHexString = (byteArray) => {
-  return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
+const ByteArrayToHexString = byteArray => {
+  return Array.from(byteArray, byte => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
 };
-const handleSort = (key) => {
+const handleSort = key => {
   return (a, b) => {
     const val1 = a[key];
     const val2 = b[key];
@@ -15,7 +15,7 @@ const handleSort = (key) => {
 export const getAllDomainList = async () => {
   const timestamp = Date.now();
 
-  const requestQueue = domainUrlList.map(async (item) => {
+  const requestQueue = domainUrlList.map(async item => {
     const { headers } = await Request.head(`${item}/api/ping/`);
     const timeDifference = new Date(headers.date).valueOf() - timestamp;
     return {
@@ -37,7 +37,7 @@ export const getFastestUrl = async () => {
     return domainUrlList[0];
   }
 };
-export const sendConnectCommand = async (keys) => {
+export const sendConnectCommand = async keys => {
   const { PrivateKey, userid } = keys;
   const timestamp = Date.now();
   let nodeId = 'nodeId';
@@ -95,11 +95,16 @@ export const getCurrentDate = () => {
     ('0' + d.getMinutes()).slice(-2)
   );
 };
-const Uint8ToBase64String = (u8a) => {
+const Uint8ToBase64String = u8a => {
   return btoa(String.fromCharCode.apply(null, u8a));
 };
 const GenerateMessageID = async (from, topic, timestamp, payload) => {
-  return sha3_224.update(from).update(topic).update(timestamp.toString()).update(payload).hex();
+  return sha3_224
+    .update(from)
+    .update(topic)
+    .update(timestamp.toString())
+    .update(payload)
+    .hex();
 };
 export const getDataSignature = async (PrivateKey, signContent) => {
   if (!PrivateKey) {
@@ -149,7 +154,7 @@ export const sendMessageCommand = async (keys, topic, msg, nodeId) => {
   return concatArray;
 };
 
-export const renderMessagesList = async (msglist) => {
+export const renderMessagesList = async msglist => {
   return msglist.map((msg, idx) => {
     let content = '';
     if (msg.cipher_suite == 'NONE') {

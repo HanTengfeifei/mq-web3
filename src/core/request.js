@@ -1,3 +1,11 @@
+/*
+ * @Author: HanTengfeifei 1157123521@qq.com
+ * @Date: 2022-09-02 20:41:14
+ * @LastEditors: HanTengfeifei 1157123521@qq.com
+ * @LastEditTime: 2022-09-02 23:34:56
+ * @FilePath: /mq-web3/src/core/request.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 const localStorageKey = '__web3-mq_token__';
 // eslint-disable-next-line no-unused-vars
 let baseURL = '';
@@ -22,18 +30,18 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
     config.body = JSON.stringify(body);
   }
 
-  return window.fetch(`${baseURL}${endpoint}`, config).then(async (response) => {
+  return window.fetch(`${baseURL}${endpoint}`, config).then(async response => {
     if (response.status === 401) {
       logout();
       window.location.assign(window.location);
       return;
     }
-    if (response.ok) {
+    if (response.status === 200) {
       let res = await response.json();
-      const { data } = res;
-      if (data.code !== 0) {
-        throw new Error(data.msg);
+      if (res.code !== 0) {
+        throw new Error(res.msg);
       }
+      const { data } = res;
       return data;
     } else {
       const errorMessage = await response.text();
@@ -43,7 +51,7 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
 };
 export class Request {
   constructor(httpUrl) {
-    baseURL = baseURL || httpUrl;
+    baseURL = httpUrl;
     if (!baseURL) {
       throw new Error('httpUrl is required');
     }
@@ -55,6 +63,6 @@ export class Request {
     return request(endpoint, { ...customConfig.params });
   }
   static head(endpoint) {
-    return window.fetch(endpoint).then((res) => res.json);
+    return window.fetch(endpoint).then(res => res.json);
   }
 }
