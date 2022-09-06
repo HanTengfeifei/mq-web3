@@ -1,6 +1,6 @@
 // import * as apis from './authorization/index';
 import { Client } from './client';
-import { savePublicKeyRequest } from './api';
+import { savePublicKeyRequest, createRoomRequest } from './api';
 import { isPlainObject } from './utils';
 export * from './client';
 export * from './authorization/index';
@@ -36,6 +36,7 @@ export const onRpcRequest = async ({ origin, request }) => {
   // if (!state) {
   //   await saveClient(keys));
   // }
+  const payload = request.payload;
 
   switch (request.method) {
     case 'inApp':
@@ -61,7 +62,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'web3-mq-init':
       const initOptions = request.initOptions;
       if (initOptions && isPlainObject(initOptions)) {
-        return new Promise(async (r) => {
+        return new Promise(async r => {
           const fastUrl = await Client.init({
             app_key: '',
             connectUrl: '',
@@ -77,7 +78,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'web3-mq-register':
       const signContentURI = request.signContentURI;
       // const app_key = request.app_key;
-      return new Promise(async (r) => {
+      return new Promise(async r => {
         try {
           // await Client.init();
           const res = await Client.register.signMetaMask(signContentURI);
@@ -89,11 +90,21 @@ export const onRpcRequest = async ({ origin, request }) => {
           throw new Error(e);
         }
       });
-    case 'test':
-      const payload = request.payload;
-      return new Promise(async (r) => {
+    case 'savePublicKeyRequest':
+      return new Promise(async r => {
         try {
           const res = await savePublicKeyRequest(payload);
+          r(res);
+        } catch (e) {
+          return r({
+            res: 'failed',
+          });
+        }
+      });
+    case 'createRoomRequest':
+      return new Promise(async r => {
+        try {
+          const res = await createRoomRequest(payload);
           r(res);
         } catch (e) {
           return r({

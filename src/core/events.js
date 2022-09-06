@@ -38,4 +38,4 @@ export const EVENT_MAP = {
 
 const IS_VALID_EVENT_MAP_TYPE = { ...EVENT_MAP, all: true };
 
-export const isValidEventType = (eventType) => IS_VALID_EVENT_MAP_TYPE[eventType] || false;
+export const isValidEventType = eventType => IS_VALID_EVENT_MAP_TYPE[eventType] || false;
