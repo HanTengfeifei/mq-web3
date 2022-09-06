@@ -2,20 +2,21 @@ import * as ed from '@noble/ed25519';
 import { Web3MQRequestMessage, ConnectCommand } from './pb';
 import { Request } from './core/request';
 import { domainUrlList } from './core/config';
-const ByteArrayToHexString = byteArray => {
-  return Array.from(byteArray, byte => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
+import { PbTypeConnectReqCommand, PbTypeMessage } from './core/pbType';
+const ByteArrayToHexString = (byteArray) => {
+  return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
 };
-const handleSort = key => {
+const handleSort = (key) => {
   return (a, b) => {
     const val1 = a[key];
     const val2 = b[key];
     return val1 - val2;
   };
 };
-export const getAllDomainList = async () => {
+export const getAllDomainList = async (env) => {
   const timestamp = Date.now();
 
-  const requestQueue = domainUrlList.map(async item => {
+  const requestQueue = domainUrlList[env].map(async (item) => {
     const { headers } = await Request.head(`${item}/api/ping/`);
     const timeDifference = new Date(headers.date).valueOf() - timestamp;
     return {
@@ -27,17 +28,17 @@ export const getAllDomainList = async () => {
   });
   return await Promise.all(requestQueue);
 };
-export const getFastestUrl = async () => {
+export const getFastestUrl = async (env = 'test') => {
   try {
-    const list = await getAllDomainList();
+    const list = await getAllDomainList(env);
     // Sorting strategy
     return list.sort(handleSort('time'))[0].url;
   } catch (error) {
     console.log(error, 'get fast url error');
-    return domainUrlList[0];
+    return domainUrlList[env][0];
   }
 };
-export const sendConnectCommand = async keys => {
+export const sendConnectCommand = async (keys) => {
   const { PrivateKey, userid } = keys;
   const timestamp = Date.now();
   let nodeId = 'nodeId';
@@ -70,7 +71,7 @@ export const GenerateEd25519KeyPair = async () => {
   };
 };
 export const selectUrl = (type = 'http', url = 'us-west-2.web3mq.com') => {
-  let Domain = url;
+  let Domain = url.split('://')[1];
   // Domain = 'ap-singapore-1.web3mq.com';
 
   const BASE_URL = `https://${Domain}`;
@@ -95,16 +96,11 @@ export const getCurrentDate = () => {
     ('0' + d.getMinutes()).slice(-2)
   );
 };
-const Uint8ToBase64String = u8a => {
+const Uint8ToBase64String = (u8a) => {
   return btoa(String.fromCharCode.apply(null, u8a));
 };
 const GenerateMessageID = async (from, topic, timestamp, payload) => {
-  return sha3_224
-    .update(from)
-    .update(topic)
-    .update(timestamp.toString())
-    .update(payload)
-    .hex();
+  return sha3_224.update(from).update(topic).update(timestamp.toString()).update(payload).hex();
 };
 export const getDataSignature = async (PrivateKey, signContent) => {
   if (!PrivateKey) {
@@ -154,7 +150,7 @@ export const sendMessageCommand = async (keys, topic, msg, nodeId) => {
   return concatArray;
 };
 
-export const renderMessagesList = async msglist => {
+export const renderMessagesList = async (msglist) => {
   return msglist.map((msg, idx) => {
     let content = '';
     if (msg.cipher_suite == 'NONE') {
@@ -199,3 +195,18 @@ export const renderMessagesList = async msglist => {
     return message;
   });
 };
+const kindOf = ((cache) => {
+  // eslint-disable-next-line func-names
+  return (thing) => {
+    const str = toString.call(thing);
+    return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
+  };
+})(Object.create(null));
+export function isPlainObject(val) {
+  if (kindOf(val) !== 'object') {
+    return false;
+  }
+
+  const prototype = Object.getPrototypeOf(val);
+  return prototype === null || prototype === Object.prototype;
+}

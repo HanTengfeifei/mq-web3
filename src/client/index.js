@@ -37,15 +37,15 @@ export class Client {
       connectUrl: null,
     },
   ) => {
-    const { connectUrl, app_key } = initOptions;
-    const fastUrl = connectUrl || (await getFastestUrl());
+    const { connectUrl, app_key, env } = initOptions;
+    const fastUrl = connectUrl || (await getFastestUrl(env));
     Client.wsUrl = selectUrl('ws', fastUrl);
     new Request(selectUrl('http', fastUrl));
     Client.register = new Register(app_key);
     return fastUrl;
   };
 
-  static getInstance = keys => {
+  static getInstance = (keys) => {
     if (!keys) {
       throw new Error('The PrivateKey and PublicKey is required!');
     }

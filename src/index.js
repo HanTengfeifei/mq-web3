@@ -1,5 +1,7 @@
-import * as apis from './authorization/index';
+// import * as apis from './authorization/index';
 import { Client } from './client';
+import { savePublicKeyRequest } from './api';
+import { isPlainObject } from './utils';
 export * from './client';
 export * from './authorization/index';
 /**
@@ -19,21 +21,22 @@ async function saveClient(keys) {
     params: ['update', { keys: keys }],
   });
 }
-async function getClient() {
-  const state = await wallet.request({
-    method: 'snap_manageState',
-    params: ['get'],
-  });
-  if (state === null || (typeof state === 'object' && state.keys === undefined)) {
-    return null;
-  }
-  return state.keys;
-}
+// async function getClient() {
+//   const state = await wallet.request({
+//     method: 'snap_manageState',
+//     params: ['get'],
+//   });
+//   if (state === null || (typeof state === 'object' && state.keys === undefined)) {
+//     return null;
+//   }
+//   return state.keys;
+// }
 export const onRpcRequest = async ({ origin, request }) => {
   // const state = await getClient();
   // if (!state) {
   //   await saveClient(keys));
   // }
+
   switch (request.method) {
     case 'inApp':
       return wallet.request({
@@ -55,25 +58,46 @@ export const onRpcRequest = async ({ origin, request }) => {
           },
         ],
       });
-    case 'web3-mq':
-      return new Promise(async (r) => {
-        await Client.init();
-        const res = await new apis.Register('vAUJTFXbBZRkEDRE').signMetaMask();
-        await saveClient(res);
-        r(res);
-      });
-    case 'instance':
+    case 'web3-mq-init':
+      const initOptions = request.initOptions;
+      if (initOptions && isPlainObject(initOptions)) {
+        return new Promise(async (r) => {
+          const fastUrl = await Client.init({
+            app_key: '',
+            connectUrl: '',
+            env: 'test',
+            ...initOptions,
+          });
+          r(fastUrl);
+        });
+      } else {
+        throw new Error('initOptions require a object.');
+      }
+
+    case 'web3-mq-register':
+      const signContentURI = request.signContentURI;
+      // const app_key = request.app_key;
       return new Promise(async (r) => {
         try {
-          const keys = await getClient();
-          if (keys) {
-            r({
-              name: 'test',
-            });
-          }
+          // await Client.init();
+          const res = await Client.register.signMetaMask(signContentURI);
+          // const res = await new apis.Register(app_key).signMetaMask(signContentURI);
+          await saveClient(res);
+          r(res);
+        } catch (e) {
+          r('9');
+          throw new Error(e);
+        }
+      });
+    case 'test':
+      const payload = request.payload;
+      return new Promise(async (r) => {
+        try {
+          const res = await savePublicKeyRequest(payload);
+          r(res);
         } catch (e) {
           return r({
-            name: 'test',
+            res: 'failed',
           });
         }
       });

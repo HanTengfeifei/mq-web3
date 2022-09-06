@@ -1,6 +1,6 @@
 import * as sha from 'js-sha3';
-import { Request } from '../core/request';
-import { GenerateEd25519KeyPair, getCurrentDate, selectUrl } from '../utils';
+// import { Request } from '../core/request';
+import { GenerateEd25519KeyPair, getCurrentDate } from '../utils';
 import { savePublicKeyRequest } from '../api';
 export class Register {
   appKey = 'vAUJTFXbBZRkEDRE';
@@ -19,7 +19,7 @@ export class Register {
       params: [{ eth_accounts: {} }],
     };
     // @ts-ignore
-    const requestPermissionsRes = await window.ethereum.request(reqParams).catch(e => {
+    const requestPermissionsRes = await window.ethereum.request(reqParams).catch((e) => {
       console.log(e, 'e');
     });
 
@@ -54,8 +54,8 @@ export class Register {
     return res;
   };
 
-  signMetaMask = async (domainUrl, connectUrl) => {
-    new Request(selectUrl('http', connectUrl));
+  signMetaMask = async (signContentURI) => {
+    // new Request(selectUrl('http', connectUrl));
     // selectUrl('http', connectUrl);
 
     const { address } = await this.getEthAccount();
@@ -71,7 +71,7 @@ export class Register {
     let signContent = `Web3MQ wants you to sign in with your Ethereum account:
     ${address}
     For Web3MQ registration
-    URI: ${domainUrl}
+    URI: ${signContentURI}
     Version: 1
     Nonce: ${NonceContent}
     Issued At: ${getCurrentDate()}`;

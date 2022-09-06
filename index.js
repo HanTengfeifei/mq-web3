@@ -3,12 +3,14 @@ const sendInAppButton = document.querySelector('button.sendInApp');
 const sendNativeButton = document.querySelector('button.sendNative');
 const send1Button = document.querySelector('button.send1');
 const send2Button = document.querySelector('button.send2');
+const testButton = document.querySelector('button.test');
 
 connectButton.addEventListener('click', connect);
 sendInAppButton.addEventListener('click', () => send('inApp'));
 sendNativeButton.addEventListener('click', () => send('native'));
-send1Button.addEventListener('click', () => send('web3-mq'));
-send2Button.addEventListener('click', () => send('instance'));
+send1Button.addEventListener('click', () => send('web3-mq-init'));
+send2Button.addEventListener('click', () => send('web3-mq-register'));
+testButton.addEventListener('click', () => send('test'));
 
 /**
  * Get permission to interact with and install the snap.
@@ -42,6 +44,25 @@ async function send(method) {
         snapId,
         {
           method,
+          // signContentURI: 'https://www.web3mq.com',
+          // app_key: 'vAUJTFXbBZRkEDRE',
+          initOptions: {
+            env: 'test',
+            app_key: 'vAUJTFXbBZRkEDRE',
+          },
+          payload: {
+            userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+            app_key: 'vAUJTFXbBZRkEDRE',
+            metamask_signature:
+              '0x6a4f202fa303270677fb4dadb979429570507525f405320b28fbc8c82217819643c3a7ba350a2b512ca26dd3e18a80cec90a523ad4cdb7fd969ffae6501b5dfc1c',
+            pubkey: 'cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+            sign_content:
+              'Web3MQ wants you to sign in with your Ethereum account:\n    0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f\n    For Web3MQ registration\n    URI: https://www.web3mq.com\n    Version: 1\n    Nonce: 4be25c1f1ecfeba53d22b6cbf19f650060e4b3b6e01d0f68aa8106e2\n    Issued At: 06/09/2022 18:14',
+            timestamp: 1662459243257,
+            userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+            wallet_address: '0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f',
+            wallet_type: 'eth',
+          },
         },
       ],
     });

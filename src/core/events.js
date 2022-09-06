@@ -24,6 +24,8 @@ export const EVENT_MAP = {
   'message.updated': true,
   // 获取message list
   'message.getList': true,
+  // 获取message new
+  'message.new': true,
   // 获取message thread list
   'message.getThreadList': true,
   // 打开当前romm下的thread列表
