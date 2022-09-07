@@ -18,7 +18,7 @@ import {
   getRreceiveFriendListRequests,
   operationFriendRequest,
 } from './api';
-import { isPlainObject, getDataSignature } from './utils';
+import { isPlainObject, getDataSignature, renderMessagesList } from './utils';
 export * from './client';
 export * from './authorization/index';
 /**
@@ -166,7 +166,11 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'getMessageListRequest':
       return new Promise(async (r) => {
         try {
-          const res = await getMessageListRequest(payload);
+          const {
+            data: { result = [] },
+          } = await getMessageListRequest(payload);
+          const data = await renderMessagesList(result);
+          let res = Array.isArray(data) ? data.reverse() : [];
           r(res);
         } catch (e) {
           return r({
@@ -174,17 +178,17 @@ export const onRpcRequest = async ({ origin, request }) => {
           });
         }
       });
-    case 'getMessageListRequest':
-      return new Promise(async (r) => {
-        try {
-          const res = await getMessageListRequest(payload);
-          r(res);
-        } catch (e) {
-          return r({
-            res: 'failed',
-          });
-        }
-      });
+    // case 'getMessageListRequest':
+    //   return new Promise(async (r) => {
+    //     try {
+    //       const res = await getMessageListRequest(payload);
+    //       r(res);
+    //     } catch (e) {
+    //       return r({
+    //         res: 'failed',
+    //       });
+    //     }
+    //   });
     case 'changeMessageStatusRequest':
       return new Promise(async (r) => {
         try {
@@ -335,36 +339,21 @@ export const onRpcRequest = async ({ origin, request }) => {
           });
         }
       });
-    case 'getUserId':
-      return new Promise(async (r) => {
-        try {
-          let keys = await getClient();
-          if (!keys) return null;
-          const res = `user:${keys.PublicKey}`;
-          r(res);
-        } catch (e) {
-          return r({
-            res: 'failed',
-          });
-        }
-      });
-    case 'getDataSignature':
-      return new Promise(async (r) => {
-        try {
-          let keys = await getClient();
-          if (!keys) return null;
-          const res = `user:${keys.PublicKey}`;
-          r(res);
-        } catch (e) {
-          return r({
-            res: 'failed',
-          });
-        }
-      });
     case 'getDataSignature':
       return new Promise(async (r) => {
         try {
           const res = await getDataSignature(payload.PrivateKey, payload.signContent);
+          r(res);
+        } catch (e) {
+          return r({
+            res: 'failed',
+          });
+        }
+      });
+    case 'renderMessagesList':
+      return new Promise(async (r) => {
+        try {
+          const res = await renderMessagesList(payload.list);
           r(res);
         } catch (e) {
           return r({
