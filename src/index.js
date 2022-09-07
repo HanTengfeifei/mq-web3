@@ -62,7 +62,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'web3-mq-init':
       const initOptions = request.initOptions;
       if (initOptions && isPlainObject(initOptions)) {
-        return new Promise(async r => {
+        return new Promise(async (r) => {
           const fastUrl = await Client.init({
             app_key: '',
             connectUrl: '',
@@ -78,7 +78,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'web3-mq-register':
       const signContentURI = request.signContentURI;
       // const app_key = request.app_key;
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           // await Client.init();
           const res = await Client.register.signMetaMask(signContentURI);
@@ -91,7 +91,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'savePublicKeyRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await savePublicKeyRequest(payload);
           r(res);
@@ -102,7 +102,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'createRoomRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await createRoomRequest(payload);
           r(res);
@@ -112,6 +112,10 @@ export const onRpcRequest = async ({ origin, request }) => {
           });
         }
       });
+    case 'test':
+      return {
+        test: 'test',
+      };
     default:
       throw new Error('Method not found.');
   }
