@@ -33,7 +33,6 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
   let Url = body
     ? `${baseURL}${endpoint}`
     : `${baseURL}${endpoint}?${encodeURIComponent(qs.stringify(customConfig))}`;
-  debugger;
 
   return window.fetch(`${Url}`, config).then(async (response) => {
     if (response.status === 401) {

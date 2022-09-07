@@ -1,5 +1,5 @@
 {
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "An example Snap built using  Rollup",
   "proposedName": "mq-web3",
   "repository": {
@@ -7,7 +7,7 @@
     "url": "https://github.com/HanTengfeifei/mq-web3.git"
   },
   "source": {
-    "shasum": "A0gam0i1x1qe7fE/Z/qSklPHeJyOnvVCcEfxIti1W50=",
+    "shasum": "bEVnBQ++144+6SQoZ8dpV/TtXuGHPCBnZyt2N0Liq1Q=",
     "location": {
       "npm": {
         "filePath": "dist/bundle.js",
