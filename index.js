@@ -13,6 +13,7 @@ const send1Button = document.querySelector('button.send1');
 const send2Button = document.querySelector('button.send2');
 const savekeysButton = document.querySelector('button.savekeys');
 const testButton = document.querySelector('button.test');
+const getUserIdButton = document.querySelector('button.getUserId');
 
 connectButton.addEventListener('click', connect);
 sendInAppButton.addEventListener('click', () => send('inApp'));
@@ -21,6 +22,7 @@ send1Button.addEventListener('click', () => send('web3-mq-init'));
 send2Button.addEventListener('click', () => send('web3-mq-register'));
 savekeysButton.addEventListener('click', () => send('savePublicKeyRequest'));
 testButton.addEventListener('click', () => send('test'));
+getUserIdButton.addEventListener('click', () => send('getUserId'));
 
 /**
  * Get permission to interact with and install the snap.
