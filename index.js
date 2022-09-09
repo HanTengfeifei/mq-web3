@@ -86,3 +86,15 @@ async function send(method) {
     alert(`Problem happened: ${err.message}` || err);
   }
 }
+const init = async () => {
+  const timestamp = Date.now();
+
+  // let userid = await send('getUserId');
+  // let keys = await send('getkeys');
+  // const signContent = userid + timestamp;
+  let payload = {
+    list: [], //messageList
+  };
+  let res = await send('changeNotificationStatusRequest', payload);
+  console.log('res', res);
+};

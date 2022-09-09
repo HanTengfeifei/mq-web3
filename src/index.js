@@ -78,14 +78,13 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //Authorization
     case 'web3-mq-init':
-      const initOptions = request.initOptions;
-      if (initOptions && isPlainObject(initOptions)) {
+      if (payload && isPlainObject(payload)) {
         return new Promise(async (r) => {
           const fastUrl = await Client.init({
             app_key: '',
             connectUrl: '',
             env: 'test',
-            ...initOptions,
+            ...payload,
           });
           r(fastUrl);
         });
@@ -94,7 +93,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       }
 
     case 'web3-mq-register':
-      const signContentURI = request.signContentURI;
+      const { signContentURI } = request.payload;
       // const app_key = request.app_key;
       return new Promise(async (r) => {
         try {
