@@ -32,21 +32,45 @@ export * from './authorization/index';
  * @throws If the request method is not valid for this snap.
  * @throws If the `snap_notify` call failed.
  */
-async function saveClient(keys) {
-  await wallet.request({
-    method: 'snap_manageState',
-    params: ['update', { keys: keys }],
-  });
-}
-async function getClient() {
+async function saveClient(keyName, value) {
+  if (!keyName || typeof keyName != 'string') {
+    return;
+  }
   const state = await wallet.request({
     method: 'snap_manageState',
     params: ['get'],
   });
-  if (state === null || (typeof state === 'object' && state.keys === undefined)) {
+  if (state) {
+    state[keyName] = value;
+    await wallet.request({
+      method: 'snap_manageState',
+      params: ['update', { ...state }],
+    });
+    return;
+  }
+  let obj = {};
+  obj[keyName] = value;
+  await wallet.request({
+    method: 'snap_manageState',
+    params: ['update', obj],
+  });
+}
+async function getClient(keyName) {
+  const state = await wallet.request({
+    method: 'snap_manageState',
+    params: ['get'],
+  });
+  if (typeof keyName != 'string') {
     return null;
   }
-  return state.keys;
+  let targetValue = state[keyName];
+  if (state === null || (typeof state === 'object' && targetValue === undefined)) {
+    return null;
+  }
+  if (!keyName) {
+    return state;
+  }
+  return targetValue;
 }
 export const onRpcRequest = async ({ origin, request }) => {
   // const state = await getClient();
@@ -100,7 +124,7 @@ export const onRpcRequest = async ({ origin, request }) => {
           // await Client.init();
           const res = await Client.register.signMetaMask(signContentURI);
           // const res = await new apis.Register(app_key).signMetaMask(signContentURI);
-          await saveClient(res);
+          await saveClient('keys', res);
           r(res);
         } catch (e) {
           r('9');
@@ -360,7 +384,15 @@ export const onRpcRequest = async ({ origin, request }) => {
           });
         }
       });
+    case 'saveTargetOrigin':
+      const targetOrigin = payload.targetOrigin;
+      await saveClient('targetOrigin', targetOrigin);
+      return {
+        done: targetOrigin,
+      };
     case 'test':
+      let targetOrigined = await getClient('targetOrigin');
+      Window.postMessage('i am a message', targetOrigined);
       return {
         test: 'test',
       };

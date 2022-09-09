@@ -26,6 +26,12 @@ testButton.addEventListener('click', () => send('test'));
 getUserIdButton.addEventListener('click', () => send('getUserId'));
 getKeysButton.addEventListener('click', () => send('getKeys'));
 
+['saveTargetOrigin'].forEach((item) => {
+  let ele = document.createElement('button');
+  ele.addEventListener('click', () => send(item));
+  ele.textContent = item;
+  document.body.appendChild(ele);
+});
 /**
  * Get permission to interact with and install the snap.
  */
@@ -49,8 +55,32 @@ async function connect() {
  *
  * @param method - The method to call. Must be one of `inApp` or `native`.
  */
+function render(event) {
+  var origin = event.origin;
+  console.log('----------render----------', event, origin);
+}
+window.addEventListener('message', render, false);
 async function send(method) {
   console.log('method', method);
+  let payload = {
+    // render: render,
+    userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+    app_key: 'vAUJTFXbBZRkEDRE',
+    metamask_signature:
+      '0x6a4f202fa303270677fb4dadb979429570507525f405320b28fbc8c82217819643c3a7ba350a2b512ca26dd3e18a80cec90a523ad4cdb7fd969ffae6501b5dfc1c',
+    pubkey: 'cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+    sign_content:
+      'Web3MQ wants you to sign in with your Ethereum account:\n    0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f\n    For Web3MQ registration\n    URI: https://www.web3mq.com\n    Version: 1\n    Nonce: 4be25c1f1ecfeba53d22b6cbf19f650060e4b3b6e01d0f68aa8106e2\n    Issued At: 06/09/2022 18:14',
+    timestamp: 1662459243257,
+    userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
+    wallet_address: '0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f',
+    wallet_type: 'eth',
+  };
+  if (method === 'saveTargetOrigin') {
+    payload = {
+      targetOrigin: window.origin,
+    };
+  }
   try {
     const res = await ethereum.request({
       method: 'wallet_invokeSnap',
@@ -64,19 +94,7 @@ async function send(method) {
             env: 'test',
             app_key: 'vAUJTFXbBZRkEDRE',
           },
-          payload: {
-            userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
-            app_key: 'vAUJTFXbBZRkEDRE',
-            metamask_signature:
-              '0x6a4f202fa303270677fb4dadb979429570507525f405320b28fbc8c82217819643c3a7ba350a2b512ca26dd3e18a80cec90a523ad4cdb7fd969ffae6501b5dfc1c',
-            pubkey: 'cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
-            sign_content:
-              'Web3MQ wants you to sign in with your Ethereum account:\n    0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f\n    For Web3MQ registration\n    URI: https://www.web3mq.com\n    Version: 1\n    Nonce: 4be25c1f1ecfeba53d22b6cbf19f650060e4b3b6e01d0f68aa8106e2\n    Issued At: 06/09/2022 18:14',
-            timestamp: 1662459243257,
-            userid: 'user:cd96666ba0cded1e22a233769a0f0b638d00f5e00298590c5eb3051d039b078c',
-            wallet_address: '0x3c75b4f1fe09559c98f09066c0c09831d8d4fc0f',
-            wallet_type: 'eth',
-          },
+          payload,
         },
       ],
     });
@@ -93,7 +111,7 @@ const init = async () => {
   // let keys = await send('getkeys');
   // const signContent = userid + timestamp;
   let payload = {
-    list: [], //messageList
+    //具体params参考https://docs.web3messaging.online/docs/Web3MQ-API/Intro
   };
   let res = await send('changeNotificationStatusRequest', payload);
   console.log('res', res);
