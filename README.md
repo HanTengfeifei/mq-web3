@@ -1,3 +1,3 @@
 # docs
 
-https://docs.web3messaging.online/docs/Web3MQ-SDK/JS-SDK-V2/quickStart/
+https://www.notion.so/houseplatform/web3-mq-snap-3021dad61ca0459da9023fed1dcf1692n 
