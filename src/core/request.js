@@ -3,7 +3,7 @@ import qs from 'query-string';
  * @Author: HanTengfeifei 1157123521@qq.com
  * @Date: 2022-09-02 20:41:14
  * @LastEditors: HanTengfeifei 1157123521@qq.com
- * @LastEditTime: 2022-09-06 21:10:33
+ * @LastEditTime: 2022-09-13 19:55:44
  * @FilePath: /mq-web3/src/core/request.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -32,9 +32,10 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
   }
   let Url = body
     ? `${baseURL}${endpoint}`
-    : `${baseURL}${endpoint}?${encodeURIComponent(qs.stringify(customConfig))}`;
+    : // : `${baseURL}${endpoint}?${encodeURIComponent(qs.stringify(customConfig))}`;
+      `${baseURL}${endpoint}?${qs.stringify(customConfig)}`;
 
-  return window.fetch(`${Url}`, config).then(async (response) => {
+  return window.fetch(`${Url}`, config).then(async response => {
     if (response.status === 401) {
       logout();
       // window.location.assign(window.location);
@@ -45,8 +46,8 @@ export const request = (endpoint, { body, ...customConfig } = {}) => {
       if (res.code !== 0) {
         throw new Error(res.msg);
       }
-      const { data } = res;
-      return data;
+      // const { data } = res;
+      return res;
     } else {
       const errorMessage = await response.text();
       return Promise.reject(new Error(errorMessage));
@@ -67,7 +68,7 @@ export class Request {
     return request(endpoint, { ...customConfig.params });
   }
   static head(endpoint) {
-    return window.fetch(endpoint, { method: 'HEAD' }).then((res) => {
+    return window.fetch(endpoint, { method: 'HEAD' }).then(res => {
       let headers = {};
       res.headers.forEach((v, k) => (headers[k] = v));
       return { headers };

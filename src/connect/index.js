@@ -1,3 +1,11 @@
+/*
+ * @Author: HanTengfeifei 1157123521@qq.com
+ * @Date: 2022-09-02 20:41:14
+ * @LastEditors: HanTengfeifei 1157123521@qq.com
+ * @LastEditTime: 2022-09-13 20:11:43
+ * @FilePath: /mq-web3/src/connect/index.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Client } from '../client';
 import { sendConnectCommand, GetContactBytes } from '../utils';
 import { PbTypeConnectRespCommand, PbTypePingCommand, PbTypePongCommand } from '../core/pbType';
@@ -18,7 +26,7 @@ export class Connect {
     this.init();
   }
   init() {
-    console.log(Client.wsUrl);
+    console.log(Client.wsUrl, 'Client.wsUrl');
     if (!('WebSocket' in window)) {
       throw new Error('Browser not supported WebSocket');
     }
@@ -35,7 +43,7 @@ export class Connect {
       wsconn.send(concatArray);
     };
 
-    wsconn.onmessage = (event) => {
+    wsconn.onmessage = event => {
       this.reset();
       var respData = new Uint8Array(event.data);
       const PbType = respData[0];

@@ -1,22 +1,23 @@
 import * as ed from '@noble/ed25519';
+import { sha3_224 } from 'js-sha3';
 import { Web3MQRequestMessage, ConnectCommand } from './pb';
 import { Request } from './core/request';
 import { domainUrlList } from './core/config';
 import { PbTypeConnectReqCommand, PbTypeMessage } from './core/pbType';
-const ByteArrayToHexString = (byteArray) => {
-  return Array.from(byteArray, (byte) => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
+const ByteArrayToHexString = byteArray => {
+  return Array.from(byteArray, byte => ('0' + (byte & 0xff).toString(16)).slice(-2)).join('');
 };
-const handleSort = (key) => {
+const handleSort = key => {
   return (a, b) => {
     const val1 = a[key];
     const val2 = b[key];
     return val1 - val2;
   };
 };
-export const getAllDomainList = async (env) => {
+export const getAllDomainList = async env => {
   const timestamp = Date.now();
 
-  const requestQueue = domainUrlList[env].map(async (item) => {
+  const requestQueue = domainUrlList[env].map(async item => {
     const { headers } = await Request.head(`${item}/api/ping/`);
     const timeDifference = new Date(headers.date).valueOf() - timestamp;
     return {
@@ -38,7 +39,7 @@ export const getFastestUrl = async (env = 'test') => {
     return domainUrlList[env][0];
   }
 };
-export const sendConnectCommand = async (keys) => {
+export const sendConnectCommand = async keys => {
   const { PrivateKey, userid } = keys;
   const timestamp = Date.now();
   let nodeId = 'nodeId';
@@ -96,11 +97,16 @@ export const getCurrentDate = () => {
     ('0' + d.getMinutes()).slice(-2)
   );
 };
-const Uint8ToBase64String = (u8a) => {
+const Uint8ToBase64String = u8a => {
   return btoa(String.fromCharCode.apply(null, u8a));
 };
 const GenerateMessageID = async (from, topic, timestamp, payload) => {
-  return sha3_224.update(from).update(topic).update(timestamp.toString()).update(payload).hex();
+  return sha3_224
+    .update(from)
+    .update(topic)
+    .update(timestamp.toString())
+    .update(payload)
+    .hex();
 };
 export const getDataSignature = async (PrivateKey, signContent) => {
   if (!PrivateKey) {
@@ -150,7 +156,7 @@ export const sendMessageCommand = async (keys, topic, msg, nodeId) => {
   return concatArray;
 };
 
-export const renderMessagesList = async (msglist) => {
+export const renderMessagesList = async msglist => {
   return msglist.map((msg, idx) => {
     let content = '';
     if (msg.cipher_suite == 'NONE') {
@@ -195,9 +201,9 @@ export const renderMessagesList = async (msglist) => {
     return message;
   });
 };
-const kindOf = ((cache) => {
+const kindOf = (cache => {
   // eslint-disable-next-line func-names
-  return (thing) => {
+  return thing => {
     const str = toString.call(thing);
     return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
   };

@@ -72,6 +72,7 @@ async function getClient(keyName) {
   }
   return targetValue;
 }
+var instance = null;
 export const onRpcRequest = async ({ origin, request }) => {
   // const state = await getClient();
   // if (!state) {
@@ -136,16 +137,91 @@ export const onRpcRequest = async ({ origin, request }) => {
       // const app_key = request.app_key;
       return new Promise(async r => {
         try {
-          // await Client.init();
-          const res = await Client.getInstance(keys);
-          // const res = await new apis.Register(app_key).signMetaMask(signContentURI);
-          await saveClient('keys', res);
-          r(res);
+          let savedKeys = await getClient('keys');
+          let targetKeys = keys || savedKeys;
+          instance = Client.getInstance(targetKeys);
+          r('success');
         } catch (e) {
-          r('9');
           throw new Error(e);
         }
       });
+    case 'getChannelList':
+      return new Promise(async r => {
+        try {
+          let channelList = instance.channel.channelList;
+          r(channelList);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+    case 'getActiveChannel':
+      return new Promise(async r => {
+        try {
+          let activeChannel = instance.channel.activeChannel;
+          r(activeChannel);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+
+    case 'sendClientMessageListRequest':
+      //{ page: 1,size: 20,}paload
+      // const app_key = request.app_key;
+      if (payload && isPlainObject(payload)) {
+        return new Promise(async r => {
+          try {
+            let messageList = instance.message.getMessageList({
+              ...payload,
+            });
+            r(messageList);
+          } catch (e) {
+            throw new Error(e);
+          }
+        });
+      } else {
+        throw new Error('payload require a object.');
+      }
+    case 'getClientMessageList':
+      //{ page: 1,size: 20,}paload
+      // const app_key = request.app_key;
+      return new Promise(async r => {
+        try {
+          let messageList = instance.message.messageList;
+          r(messageList);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+    case 'handleSendMessage':
+      //{ page: 1,size: 20,}paload
+      // const app_key = request.app_key;
+      if (payload && isPlainObject(payload)) {
+        return new Promise(async r => {
+          try {
+            instance.message.sendMessage(paload.text);
+            r(true);
+          } catch (e) {
+            throw new Error(e);
+          }
+        });
+      } else {
+        throw new Error('payload require a object.');
+      }
+    case 'startListionNewMessage':
+      //{ page: 1,size: 20,}paload
+      // const app_key = request.app_key;
+      return new Promise(async r => {
+        try {
+          client.on('message.new', () => {
+            const list = instance.message.messageList || [];
+            instance.message.messageList = [...list, { content: text, id: list.length + 1 }];
+          });
+          r(true);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+
     case 'savePublicKeyRequest':
       return new Promise(async r => {
         try {

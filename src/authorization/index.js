@@ -19,7 +19,7 @@ export class Register {
       params: [{ eth_accounts: {} }],
     };
     // @ts-ignore
-    const requestPermissionsRes = await wallet.request(reqParams).catch((e) => {
+    const requestPermissionsRes = await wallet.request(reqParams).catch(e => {
       console.log(e, 'e');
     });
 
@@ -37,16 +37,15 @@ export class Register {
         const strLength = address[0].length;
         res.shortAddress =
           address[0].substring(0, 5) + '...' + address[0].substring(strLength - 4, strLength);
-
         //@ts-ignore
-        let balance = await wallet.request({
-          method: 'eth_getBalance',
-          params: [address[0], 'latest'],
-        });
-        if (balance) {
-          let realMoney = balance.toString(10);
-          res.balance = realMoney / 1000000000000000000;
-        }
+        // let balance = await wallet.request({
+        //   method: 'eth_getBalance',
+        //   params: [address[0], 'latest'],
+        // });
+        // if (balance) {
+        //   let realMoney = balance.toString(10);
+        //   res.balance = realMoney / 1000000000000000000;
+        // }
       }
     } catch (err) {
       console.log(err);
@@ -54,7 +53,7 @@ export class Register {
     return res;
   };
 
-  signMetaMask = async (signContentURI) => {
+  signMetaMask = async signContentURI => {
     // new Request(selectUrl('http', connectUrl));
     // selectUrl('http', connectUrl);
 

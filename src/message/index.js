@@ -1,3 +1,11 @@
+/*
+ * @Author: HanTengfeifei 1157123521@qq.com
+ * @Date: 2022-09-02 20:41:14
+ * @LastEditors: HanTengfeifei 1157123521@qq.com
+ * @LastEditTime: 2022-09-13 20:27:48
+ * @FilePath: /mq-web3/src/message/index.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { sendMessageCommand, getDataSignature, renderMessagesList } from '../utils';
 import { getMessageListRequest, changeMessageStatusRequest } from '../api';
 import {
@@ -15,10 +23,12 @@ export class Message {
   _client;
   _keys;
   messageList;
+  msg_text;
 
   constructor(client) {
     this._client = client;
     this._keys = client.keys;
+    this.msg_text = '';
     client.connect.receive = this.receive;
     this.messageList = null;
   }
@@ -34,7 +44,7 @@ export class Message {
         data: { result = [] },
       } = await getMessageListRequest({ userid, timestamp, web3mq_signature, topic, ...option });
       const data = await renderMessagesList(result);
-      this.messageList = data.reverse() ?? [];
+      this.messageList = data.reverse() || [];
       this._client.emit('message.getList', { type: 'message.getList' });
       // return data;
     }
@@ -45,7 +55,7 @@ export class Message {
    * if message from one chat: topic = userid
    */
   async changeMessageStatus(messages, status = 'delivered') {
-    const topic = this._client.channel.activeChannel?.topic;
+    const topic = this._client.channel.activeChannel.topic;
     if (topic) {
       const { userid, PrivateKey } = this._keys;
       const timestamp = Date.now();
@@ -67,12 +77,14 @@ export class Message {
   async sendMessage(msg) {
     const { keys, connect, channel } = this._client;
     if (channel.activeChannel) {
+      this.msg_text = msg;
       const { topic } = channel.activeChannel;
       const concatArray = await sendMessageCommand(keys, topic, msg, connect.nodeId);
       connect.send(concatArray);
     }
   }
   receive(pbType, bytes) {
+    console.log('pbType', pbType);
     if (pbType === PbTypeNotificationListResp) {
       console.log('Receive notification');
       const notificationList = Web3MQMessageListResponse.fromBinary(bytes);

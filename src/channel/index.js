@@ -63,7 +63,7 @@ export class Channel {
   }
 
   async getGroupMemberList(option) {
-    const groupid = this.activeChannel?.topic;
+    const groupid = this.activeChannel.topic;
     if (groupid) {
       const { userid, PrivateKey } = this._keys;
       const timestamp = Date.now();
@@ -82,7 +82,7 @@ export class Channel {
   }
 
   async inviteGroupMember(members) {
-    const groupid = this.activeChannel?.topic;
+    const groupid = this.activeChannel.topic;
     if (groupid) {
       const { userid, PrivateKey } = this._keys;
       const timestamp = Date.now();

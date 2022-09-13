@@ -1,3 +1,11 @@
+/*
+ * @Author: HanTengfeifei 1157123521@qq.com
+ * @Date: 2022-09-02 20:41:14
+ * @LastEditors: HanTengfeifei 1157123521@qq.com
+ * @LastEditTime: 2022-09-13 19:58:32
+ * @FilePath: /mq-web3/rollup.config.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import path from 'path';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -11,7 +19,7 @@ import execute from 'rollup-plugin-execute';
 // const snaps = require('@metamask/rollup-plugin-snaps').default;
 // const execute = require('rollup-plugin-execute');
 
-const getPath = (_path) => path.resolve(__dirname, _path);
+const getPath = _path => path.resolve(__dirname, _path);
 
 const isDev = process.env.ROLLUP_WATCH || false;
 
@@ -56,7 +64,7 @@ const outputMap = [
     //   '@noble/ed25519': 'ed',
     //   'js-sha3': 'js-sha3',
     // },
-    // sourcemap: true,
+    sourcemap: true,
     extend: true,
   },
   // {
@@ -69,7 +77,7 @@ const outputMap = [
   // },
 ];
 
-const buildConf = (options) => Object.assign({}, commonConf, options);
+const buildConf = options => Object.assign({}, commonConf, options);
 
 const webConfig = {
   input: './src/index.ts',
@@ -80,6 +88,6 @@ const webConfig = {
   },
   plugins: [babel({ babelHelpers: 'bundled', extensions: ['.ts'] })],
 };
-export default outputMap.map((output) =>
+export default outputMap.map(output =>
   buildConf({ output: { name: packageJSON.name, ...output } }),
 );
