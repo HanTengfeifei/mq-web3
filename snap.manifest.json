@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
+  "version": "1.0.11",
   "description": "An example Snap built using  Rollup",
   "proposedName": "mq-web3",
   "repository": {
