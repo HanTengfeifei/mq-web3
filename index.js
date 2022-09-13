@@ -2,7 +2,7 @@
  * @Author: HanTengfeifei 1157123521@qq.com
  * @Date: 2022-09-06 20:48:44
  * @LastEditors: HanTengfeifei 1157123521@qq.com
- * @LastEditTime: 2022-09-06 21:13:55
+ * @LastEditTime: 2022-09-13 15:06:47
  * @FilePath: /mq-web3/index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -26,7 +26,7 @@ testButton.addEventListener('click', () => send('test'));
 getUserIdButton.addEventListener('click', () => send('getUserId'));
 getKeysButton.addEventListener('click', () => send('getKeys'));
 
-['saveTargetOrigin'].forEach((item) => {
+['saveTargetOrigin'].forEach(item => {
   let ele = document.createElement('button');
   ele.addEventListener('click', () => send(item));
   ele.textContent = item;
@@ -55,11 +55,11 @@ async function connect() {
  *
  * @param method - The method to call. Must be one of `inApp` or `native`.
  */
-function render(event) {
-  var origin = event.origin;
-  console.log('----------render----------', event, origin);
-}
-window.addEventListener('message', render, false);
+// function render(event) {
+//   var origin = event.origin;
+//   console.log('----------render----------', event, origin);
+// }
+// window.addEventListener('message', render, false);
 async function send(method) {
   console.log('method', method);
   let payload = {
