@@ -34,7 +34,7 @@ export class Message {
   }
 
   async getMessageList(option) {
-    const topic = this._client.channel.activeChannel?.topic;
+    const topic = this._client.channel.activeChannel.topic;
     if (topic) {
       const { userid, PrivateKey } = this._keys;
       const timestamp = Date.now();

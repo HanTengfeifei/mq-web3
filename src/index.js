@@ -72,6 +72,33 @@ async function getClient(keyName) {
   }
   return targetValue;
 }
+async function handleEvent(event) {
+  if (event.type === 'channel.getList') {
+    console.log(wallet.instance.channel.channelList);
+  }
+  if (event.type === 'channel.activeChange') {
+    console.log(wallet.instance.channel.activeChannel);
+    wallet.instance.message.getMessageList({
+      page: 1,
+      size: 20,
+    });
+  }
+  if (event.type === 'message.getList') {
+    console.log(wallet.instance.message.messageList);
+  }
+  if (event.type === 'message.new') {
+    const list = wallet.instance.message.messageList || [];
+    let text = event.data.msg;
+    wallet.instance.message.messageList = [...list, { content: text, id: list.length + 1 }];
+    console.log([...list, { content: text, id: list.length + 1 }]);
+  }
+}
+async function addListeners() {
+  wallet.instance.on('channel.getList', handleEvent);
+  wallet.instance.on('channel.activeChange', handleEvent);
+  wallet.instance.on('message.getList', handleEvent);
+  wallet.instance.on('message.new', handleEvent);
+}
 var instance = null;
 export const onRpcRequest = async ({ origin, request }) => {
   // const state = await getClient();
@@ -139,8 +166,51 @@ export const onRpcRequest = async ({ origin, request }) => {
         try {
           let savedKeys = await getClient('keys');
           let targetKeys = savedKeys;
-          instance = Client.getInstance(targetKeys);
+          wallet.instance = Client.getInstance(targetKeys);
           r('success');
+          // r(targetKeys);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+    case 'addInstanceListeners':
+      return new Promise(async (r) => {
+        try {
+          await addListeners();
+          r(true);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+    case 'queryChannelList':
+      return new Promise(async (r) => {
+        try {
+          await wallet.instance.channel.queryChannels({ page: 1, size: 100 });
+          r(true);
+        } catch (e) {
+          throw new Error(e);
+        }
+      });
+    case 'setActiveChannel':
+      const channel = payload.channel;
+      if (channel) {
+        return new Promise(async (r) => {
+          try {
+            let channelList = wallet.instance.channel.channelList;
+            await wallet.instance.channel.setActiveChannel(channelList[channel]);
+            r(true);
+          } catch (e) {
+            throw new Error(e);
+          }
+        });
+      } else {
+        throw new Error('channel is  require .');
+      }
+    case 'creatRoom':
+      return new Promise(async (r) => {
+        try {
+          await wallet.instance.channel.createRoom();
+          r(true);
         } catch (e) {
           throw new Error(e);
         }
@@ -148,7 +218,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'getChannelList':
       return new Promise(async (r) => {
         try {
-          let channelList = instance.channel.channelList;
+          let channelList = wallet.instance.channel.channelList;
           r(channelList);
         } catch (e) {
           throw new Error(e);
@@ -157,7 +227,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'getActiveChannel':
       return new Promise(async (r) => {
         try {
-          let activeChannel = instance.channel.activeChannel;
+          let activeChannel = wallet.instance.channel.activeChannel;
           r(activeChannel);
         } catch (e) {
           throw new Error(e);
@@ -186,7 +256,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       // const app_key = request.app_key;
       return new Promise(async (r) => {
         try {
-          let messageList = instance.message.messageList;
+          let messageList = wallet.instance.message.messageList;
           r(messageList);
         } catch (e) {
           throw new Error(e);
@@ -198,7 +268,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       if (payload && isPlainObject(payload)) {
         return new Promise(async (r) => {
           try {
-            instance.message.sendMessage(paload.text);
+            wallet.instance.message.sendMessage(payload.text);
             r(true);
           } catch (e) {
             throw new Error(e);

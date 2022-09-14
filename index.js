@@ -25,8 +25,19 @@ savekeysButton.addEventListener('click', () => send('savePublicKeyRequest'));
 testButton.addEventListener('click', () => send('test'));
 getUserIdButton.addEventListener('click', () => send('getUserId'));
 getKeysButton.addEventListener('click', () => send('getKeys'));
-
-['saveTargetOrigin', 'getInstance'].forEach((item) => {
+var i = 0;
+[
+  'saveTargetOrigin',
+  'getInstance',
+  'addInstanceListeners',
+  'queryChannelList',
+  'getChannelList',
+  'creatRoom',
+  'setActiveChannel',
+  'getActiveChannel',
+  'getClientMessageList',
+  'handleSendMessage',
+].forEach((item) => {
   let ele = document.createElement('button');
   ele.addEventListener('click', () => send(item));
   ele.textContent = item;
@@ -79,6 +90,16 @@ async function send(method) {
   if (method === 'saveTargetOrigin') {
     payload = {
       targetOrigin: window.origin,
+    };
+  }
+  if (method === 'setActiveChannel') {
+    payload = {
+      channel: i + 1,
+    };
+  }
+  if (method === 'handleSendMessage') {
+    payload = {
+      text: `message${i++}`,
     };
   }
   try {

@@ -43,7 +43,7 @@ export class Connect {
       wsconn.send(concatArray);
     };
 
-    wsconn.onmessage = event => {
+    wsconn.onmessage = (event) => {
       this.reset();
       var respData = new Uint8Array(event.data);
       const PbType = respData[0];

@@ -38,7 +38,7 @@ export class Channel {
     } else {
       this.channelList = result;
     }
-    if (this.channelList) {
+    if (Array.isArray(this.channelList) && this.channelList.length > 0) {
       this.setActiveChannel(this.channelList[0]);
     }
     this._client.emit('channel.getList', { type: 'channel.getList' });

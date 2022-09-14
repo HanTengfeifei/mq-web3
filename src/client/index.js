@@ -45,7 +45,7 @@ export class Client {
     return fastUrl;
   };
 
-  static getInstance = keys => {
+  static getInstance = (keys) => {
     if (!keys) {
       throw new Error('The PrivateKey and PublicKey is required!');
     }
