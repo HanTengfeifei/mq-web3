@@ -114,11 +114,11 @@ export const onRpcRequest = async ({ origin, request }) => {
           r(fastUrl);
         });
       } else {
-        throw new Error('initOptions require a object.');
+        throw new Error('payload require a object.');
       }
 
     case 'web3-mq-register':
-      const { signContentURI } = request.payload;
+      const { signContentURI } = payload;
       // const app_key = request.app_key;
       return new Promise(async r => {
         try {
