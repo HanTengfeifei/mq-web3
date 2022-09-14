@@ -255,7 +255,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       // const app_key = request.app_key;
       return new Promise(async (r) => {
         try {
-          let messageList = wallet.instance.message.messageList;
+          let messageList = wallet.instance.message.messageList || [];
           r(messageList);
         } catch (e) {
           throw new Error(e);

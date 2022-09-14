@@ -30,7 +30,7 @@ export class Message {
     this._keys = client.keys;
     this.msg_text = '';
     client.connect.receive = this.receive;
-    this.messageList = null;
+    this.messageList = [];
   }
 
   async getMessageList(option) {
