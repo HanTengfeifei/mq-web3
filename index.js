@@ -26,7 +26,7 @@ testButton.addEventListener('click', () => send('test'));
 getUserIdButton.addEventListener('click', () => send('getUserId'));
 getKeysButton.addEventListener('click', () => send('getKeys'));
 
-['saveTargetOrigin'].forEach(item => {
+['saveTargetOrigin', 'getInstance'].forEach((item) => {
   let ele = document.createElement('button');
   ele.addEventListener('click', () => send(item));
   ele.textContent = item;

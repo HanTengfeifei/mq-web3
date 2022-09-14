@@ -104,7 +104,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     //Authorization
     case 'web3-mq-init':
       if (payload && isPlainObject(payload)) {
-        return new Promise(async r => {
+        return new Promise(async (r) => {
           const fastUrl = await Client.init({
             app_key: '',
             connectUrl: '',
@@ -120,7 +120,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'web3-mq-register':
       const { signContentURI } = payload;
       // const app_key = request.app_key;
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           // await Client.init();
           const res = await Client.register.signMetaMask(signContentURI);
@@ -133,12 +133,12 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getInstance':
-      const { keys } = request.payload;
+      // const { keys } = payload;
       // const app_key = request.app_key;
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let savedKeys = await getClient('keys');
-          let targetKeys = keys || savedKeys;
+          let targetKeys = savedKeys;
           instance = Client.getInstance(targetKeys);
           r('success');
         } catch (e) {
@@ -146,7 +146,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getChannelList':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let channelList = instance.channel.channelList;
           r(channelList);
@@ -155,7 +155,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getActiveChannel':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let activeChannel = instance.channel.activeChannel;
           r(activeChannel);
@@ -168,7 +168,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       //{ page: 1,size: 20,}paload
       // const app_key = request.app_key;
       if (payload && isPlainObject(payload)) {
-        return new Promise(async r => {
+        return new Promise(async (r) => {
           try {
             let messageList = instance.message.getMessageList({
               ...payload,
@@ -184,7 +184,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'getClientMessageList':
       //{ page: 1,size: 20,}paload
       // const app_key = request.app_key;
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let messageList = instance.message.messageList;
           r(messageList);
@@ -196,7 +196,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       //{ page: 1,size: 20,}paload
       // const app_key = request.app_key;
       if (payload && isPlainObject(payload)) {
-        return new Promise(async r => {
+        return new Promise(async (r) => {
           try {
             instance.message.sendMessage(paload.text);
             r(true);
@@ -210,7 +210,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     case 'startListionNewMessage':
       //{ page: 1,size: 20,}paload
       // const app_key = request.app_key;
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           client.on('message.new', () => {
             const list = instance.message.messageList || [];
@@ -223,7 +223,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
 
     case 'savePublicKeyRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await savePublicKeyRequest(payload);
           r(res);
@@ -235,7 +235,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //API Channel
     case 'getRoomListRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getRoomListRequest(payload);
           r(res);
@@ -244,7 +244,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'createRoomRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await createRoomRequest(payload);
           r(res);
@@ -255,7 +255,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getGroupMemberListRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getGroupMemberListRequest(payload);
           r(res);
@@ -266,7 +266,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'inviteGroupMemberRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await inviteGroupMemberRequest(payload);
           r(res);
@@ -278,7 +278,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //Message
     case 'getMessageListRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const {
             data: { result = [] },
@@ -304,7 +304,7 @@ export const onRpcRequest = async ({ origin, request }) => {
     //     }
     //   });
     case 'changeMessageStatusRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await changeMessageStatusRequest(payload);
           r(res);
@@ -316,7 +316,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //User
     case 'searchUsersRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await searchUsersRequest(payload);
           r(res);
@@ -327,7 +327,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getMyProfileRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getMyProfileRequest(payload);
           r(res);
@@ -338,7 +338,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'updateMyProfileRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await updateMyProfileRequest(payload);
           r(res);
@@ -350,7 +350,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //Contact;
     case 'searchContactRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await searchContactRequest(payload);
           r(res);
@@ -361,7 +361,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getContactListRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getContactListRequest(payload);
           r(res);
@@ -372,7 +372,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'sendFriendRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await sendFriendRequest(payload);
           r(res);
@@ -383,7 +383,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getMyFriendListRequset':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getMyFriendListRequset(payload);
           r(res);
@@ -394,7 +394,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getRreceiveFriendListRequests':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getRreceiveFriendListRequests(payload);
           r(res);
@@ -405,7 +405,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'operationFriendRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await operationFriendRequest(payload);
           r(res);
@@ -417,7 +417,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //Notification
     case 'changeNotificationStatusRequest':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await changeNotificationStatusRequest(payload);
           r(res);
@@ -429,7 +429,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       });
     //Utils
     case 'getUserId':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let keys = await getClient('keys');
           if (!keys) return null;
@@ -442,7 +442,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getKeys':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           let keys = await getClient('keys');
           if (!keys) return null;
@@ -454,7 +454,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'getDataSignature':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await getDataSignature(payload.PrivateKey, payload.signContent);
           r(res);
@@ -465,7 +465,7 @@ export const onRpcRequest = async ({ origin, request }) => {
         }
       });
     case 'renderMessagesList':
-      return new Promise(async r => {
+      return new Promise(async (r) => {
         try {
           const res = await renderMessagesList(payload.list);
           r(res);
