@@ -196,8 +196,7 @@ export const onRpcRequest = async ({ origin, request }) => {
       if (channel) {
         return new Promise(async (r) => {
           try {
-            let channelList = wallet.instance.channel.channelList;
-            await wallet.instance.channel.setActiveChannel(channelList[channel]);
+            await wallet.instance.channel.setActiveChannel(channel);
             r(true);
           } catch (e) {
             throw new Error(e);
